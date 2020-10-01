@@ -1,0 +1,39 @@
+{
+    "name": "gooyer/class-finder",
+    "description": "PHP Class finder",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Gooyer\\ClassFinder\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Gooyer\\ClassFinder\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0",
+        "vimeo/psalm": "^3.16",
+        "lctrs/psalm-psr-container-plugin": "^0.3.0"
+    },
+    "scripts": {
+        "analyse": "psalm",
+        "test": "phpunit --bootstrap vendor/autoload.php --coverage-html resources/coverage --coverage-filter src tests",
+        "phpcs": "php php-cs-fixer fix src",
+        "phpcs-update": "php php-cs-fixer self-update",
+        "post-update-cmd": [
+            "@phpcs-update"
+        ]
+    },
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Łukasz Grajewski",
+            "email": "grajewski.lukasz@wp.pl"
+        }
+    ]
+}
