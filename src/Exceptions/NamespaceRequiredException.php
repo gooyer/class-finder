@@ -2,11 +2,9 @@
 
 declare(strict_types=1);
 
-
 namespace Gooyer\ClassFinder\Exceptions;
 
-
-class NamespaceRequiredException
+class NamespaceRequiredException extends \Exception
 {
 
 }
