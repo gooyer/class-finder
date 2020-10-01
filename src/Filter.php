@@ -3,7 +3,7 @@
 namespace Gooyer\ClassFinder;
 
 
-interface FilterInterface
+interface Filter
 {
     public function __invoke(\ReflectionClass $reflectionClass);
 }
