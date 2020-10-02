@@ -32,5 +32,12 @@ class ClassFinderTest extends \PHPUnit\Framework\TestCase
 
     }
 
+    public function testExceptionThrow()
+    {
+        $instance = new ClassFinder($this->classLoader);
+        $this->expectException(NamespaceRequiredException::class);
+        $instance->implements(Filter::class)->search();
+    }
+
 
 }
