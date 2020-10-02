@@ -99,14 +99,52 @@ class ClassFinder implements ClassFinderInterface
         if (is_null($this->namespace)) {
             throw new NamespaceRequiredException();
         }
-        $this->searchPsr4($this->namespace);
+        $this->searchPsr($this->namespace);
         return $this->applyFilter($this->results, $this->filters);
     }
-    private function searchPsr4(string $namespace)
-    {
-        $psr4 = $this->classLoader->getPrefixesPsr4();
-        foreach ($psr4 as $declaredNamespace => $paths) {
 
+    private function searchPsr(string $namespace)
+    {
+        $prefixes = array_merge(
+            $this->classLoader->getPrefixesPsr4(),
+            $this->classLoader->getPrefixes()
+        );
+        foreach ($prefixes as $declaredNamespace => $paths) {
+            $declaredNamespace = rtrim($declaredNamespace, "\\");
+            if ($declaredNamespace === $namespace) {
+                // Case: Declared namespace is equals to searched.
+                $this->readFilesFrom($paths, $namespace);
+            }  elseif (str_contains($namespace, $declaredNamespace)) {
+                // Last Case: declared namespaces is substring of searched namespace.
+                // Trim namespace
+                $ns = ltrim(str_replace($declaredNamespace, "", $namespace), "\\");
+                // Convert namespace into path
+                $subdirectory = str_replace("\\", DIRECTORY_SEPARATOR, $ns);
+                $updatedPaths = array_map(function ($path) use ($subdirectory) {
+                    return $path . DIRECTORY_SEPARATOR . $subdirectory;
+                }, $paths);
+
+                $this->readFilesFrom($updatedPaths, $namespace);
+            }
+        }
+    }
+    private function readFilesFrom(array $paths, string $namespace)
+    {
+        foreach ($paths as $path) {
+            $dirIterator = new \DirectoryIterator($path);
+            foreach ($dirIterator as $splFile) {
+                if ($splFile->isFile()) {
+                    if ($splFile->getExtension() === "php") {
+                        $this->results[] = $namespace . "\\" . $splFile->getBasename(".php");
+                    }
+                }
+                if ($splFile->isDir() && !$splFile->isDot()) {
+                    $this->readFilesFrom(
+                        array(realpath($splFile->getRealPath())),
+                        $namespace . "\\" . $splFile->getBasename()
+                    );
+                }
+            }
         }
     }
 
