@@ -20,6 +20,11 @@ class ExtendFilter implements Filter
 
     public function __invoke(\ReflectionClass $reflectionClass)
     {
+        $parentClass = $reflectionClass->getParentClass();
+
+        return ($parentClass instanceof \ReflectionClass)
+            ? $this->extendClass === $reflectionClass->getParentClass()->getName()
+            : false;
 
     }
 }

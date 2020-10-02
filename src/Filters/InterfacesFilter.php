@@ -20,6 +20,16 @@ class InterfacesFilter implements Filter
 
     public function __invoke(\ReflectionClass $reflectionClass)
     {
-        // TODO: Implement __invoke() method.
+        $interfaces = array_map(function(\ReflectionClass $reflectionClass) {
+            return $reflectionClass->getName();
+        }, $reflectionClass->getInterfaces());
+
+        foreach ($this->interfaces as $requiredInterface) {
+            if (!in_array($requiredInterface, $interfaces)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

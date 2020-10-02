@@ -20,6 +20,13 @@ class TraitsFilter implements Filter
 
     public function __invoke(\ReflectionClass $reflectionClass)
     {
+        $traits = $reflectionClass->getTraitNames();
+        foreach ($this->traits as $trait) {
+            if (!in_array($trait, $traits)) {
+                return false;
+            }
+        }
 
+        return true;
     }
 }
