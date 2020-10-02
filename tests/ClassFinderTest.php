@@ -72,6 +72,22 @@ class ClassFinderTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    public function testFindClassByExtend()
+    {
+        $parentClass = \Exception::class;
+        $instance = new ClassFinder($this->classLoader);
+        $results = $instance->namespace("Gooyer\\ClassFinder\\Exceptions")->extends($parentClass)->search();
+        $this->assertIsArray($results);
+        $this->assertTrue(count($results) > 0);
+        $this->assertTrue(in_array(NamespaceRequiredException::class, $results));
+        foreach ($results as $result) {
+            $classRef = new \ReflectionClass($result);
+            $classParent = $classRef->getParentClass();
+            $this->assertInstanceOf(\ReflectionClass::class, $classParent);
+            $this->assertSame($classParent->getName(), $parentClass);
+        }
+    }
+
     public function testGetIterator()
     {
         $instance = new ClassFinder($this->classLoader);
