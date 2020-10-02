@@ -39,5 +39,20 @@ class ClassFinderTest extends \PHPUnit\Framework\TestCase
         $instance->implements(Filter::class)->search();
     }
 
+    public function testFindClassFinder()
+    {
+        $interfaces = [ClassFinderInterface::class];
+        $instance = new ClassFinder($this->classLoader);
+        $results = $instance->namespace("Gooyer\\ClassFinder")->implements($interfaces)->search();
+        $this->assertIsArray($results);
+        $this->assertTrue(count($results) > 0);
+        foreach ($results as $result) {
+            $classRef = new \ReflectionClass($result);
+            $classInterfaces = $classRef->getInterfaceNames();
+            foreach ($interfaces as $interface) {
+                $this->assertTrue(in_array($interface, $classInterfaces));
+            }
+        }
+    }
 
 }
