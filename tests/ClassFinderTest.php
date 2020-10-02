@@ -25,4 +25,12 @@ class ClassFinderTest extends \PHPUnit\Framework\TestCase
         $this->classLoader = require(realpath(__DIR__ . "/../vendor/autoload.php"));
     }
 
+    public function testInstance()
+    {
+        $clsFinder = new ClassFinder($this->classLoader);
+        $this->assertInstanceOf(ClassFinderInterface::class, $clsFinder);
+
+    }
+
+
 }
