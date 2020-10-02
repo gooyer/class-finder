@@ -55,4 +55,30 @@ class ClassFinderTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    public function testFindClassByTrait()
+    {
+        $traits = [ApplyFilters::class];
+        $instance = new ClassFinder($this->classLoader);
+        $results = $instance->namespace("Gooyer\\ClassFinder")->traits($traits)->search();
+        $this->assertIsArray($results);
+        $this->assertTrue(count($results) > 0);
+        $this->assertTrue(in_array(ClassFinder::class, $results));
+        foreach ($results as $result) {
+            $classRef = new \ReflectionClass($result);
+            $classTraits = $classRef->getTraitNames();
+            foreach ($traits as $trait) {
+                $this->assertTrue(in_array($trait, $classTraits));
+            }
+        }
+    }
+
+    public function testGetIterator()
+    {
+        $instance = new ClassFinder($this->classLoader);
+        $instance->namespace("Gooyer\\ClassFinder");
+        $iterator = $instance->getIterator();
+        $this->assertInstanceOf(\Iterator::class, $iterator);
+
+    }
+
 }
